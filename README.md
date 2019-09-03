@@ -16,6 +16,6 @@ http://114.212.80.187/wl/pa2019_fall/issues
 
 # About this Gitlab server
 
-This server is scheduled to reboot every day at 5am and backup every sunday at 1am. 
+This server is scheduled to reboot every day at 5am, and backup every sunday at 1am. 
 
 DO NOT try to pull or push around this time.
