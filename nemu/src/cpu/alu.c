@@ -418,3 +418,20 @@ uint32_t alu_sal(uint32_t src, uint32_t dest, size_t data_size)
 	}
 	return forReturn(dest,32,data_size);
 }
+uint32_t alu_neg(uint32_t src,size_t data_size){
+	
+	uint32_t res=0;
+	if(src==0)
+		cpu.eflags.CF=0;
+	else
+		cpu.eflags.CF=1;
+
+	res=~src+1;
+
+	set_OF_add(res,(~src),1,data_size);
+	set_PF(res);
+	set_SF(res,data_size);
+	set_ZF(res,data_size);
+
+	return res&(0xFFFFFFFF>>(32-data_size));
+}
