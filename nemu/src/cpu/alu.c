@@ -22,13 +22,13 @@ uint32_t forReturn(uint32_t res,int n,size_t data_size)
 void set_ZF(uint32_t r,size_t s)
 {
 	r = r &(0xFFFFFFFF>>(32 - s));
-	cpu.eflags.ZF = (r==0?1:0);
+	cpu.eflags.ZF = (r==0)?1:0;
 }
 
 void set_SF(uint32_t r,size_t s)
 {
-	r = r&(0xFFFFFFFF>>(32 - s));
-	cpu.eflags.ZF = (r == 0)?1:0;
+	r=data_deal(r,s);
+	cpu.eflags.SF=sign(r);
 }
 
 void set_PF(uint32_t r)
