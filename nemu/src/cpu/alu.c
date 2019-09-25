@@ -28,7 +28,7 @@ void set_ZF(uint32_t r,size_t s)
 void set_SF(uint32_t r,size_t s)
 {
 	r = r&(0xFFFFFFFF>>(32 - s));
-	cpu.eflags.ZF = (r == 0?1:0);
+	cpu.eflags.ZF = (r == 0)?1:0;
 }
 
 void set_PF(uint32_t r)
