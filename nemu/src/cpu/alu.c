@@ -11,7 +11,8 @@ uint32_t data_ext(uint32_t data,int n)
 {
 	if(n==16)
 	return 	sign_ext(data&0xFFFF,16);
-	else return 	sign_ext(data&0xFF,8);
+	else if(n==8)
+	 return 	sign_ext(data&0xFF,8);
 }
 
 uint32_t forReturn(uint32_t res,int n,size_t data_size)
@@ -94,7 +95,7 @@ void set_CF_adc(uint32_t r,uint32_t s, uint32_t d,size_t size)
 	else cpu.eflags.CF=r<s?1:0;
 }
 
-void set_OF_adc(uint32_t r,uint32_t s,uint32_t d,size_t size)
+/* void set_OF_adc(uint32_t r,uint32_t s,uint32_t d,size_t size)
 {
 	if(size==16)
 	{
@@ -110,8 +111,33 @@ void set_OF_adc(uint32_t r,uint32_t s,uint32_t d,size_t size)
 if(sign(s)==sign(d))
 		cpu.eflags.OF=sign(s)!=sign(r)?1:0;
 else  cpu.eflags.OF=0;
+}*/
 
-
+void set_OF_adc(uint32_t result,uint32_t src,uint32_t dest,size_t data_size){
+	switch(data_size)
+	{
+		case 8:
+			result=sign_ext(result&0xFF,8);
+			src=sign_ext(src&0xFF,8);
+			dest=sign_ext(dest&0xFF,8);
+			break;
+		case 16:
+			result=sign_ext(result&0xFFFF,16);
+			src=sign_ext(src&0xFFFF,16);
+			dest=sign_ext(dest&0xFFFF,16);
+			break;
+		default:break;
+	}
+	if(sign(src)==sign(dest)){
+		if(sign(src)!=sign(result))
+			cpu.eflags.OF=1;
+		else
+			cpu.eflags.OF=0;
+	}
+	else
+	{
+		cpu.eflags.OF=0;
+	}
 }
 
 void set_CF_sub(uint32_t r,uint32_t s,size_t data_size)
