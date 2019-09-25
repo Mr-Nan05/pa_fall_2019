@@ -73,7 +73,7 @@ void set_OF_add(uint32_t r,uint32_t s,uint32_t d,size_t size)
 						s= data_ext(s,8);
 						d = data_ext(d,8);
 						break; 
-			defult:break;
+			default:break;
 		}
 
 		if(sign(s) == sign(d))
@@ -92,6 +92,32 @@ void set_CF_adc(uint32_t r,uint32_t s, uint32_t d,size_t size)
 	d  =data_deal(d,size);
 	if(d)cpu.eflags.CF=r<=s?1:0;
 	else cpu.eflags.CF=r<s?1:0;
+}
+
+void set_OF_adc(uint32_t r,uint32_t s,uint32_t d,size_t size)
+{
+	if(size==16)
+	{
+		 data_ext(r,16);
+			s = data_ext(s,16);
+			d = data_ext(d,16);
+	}else if(size==8)
+	{
+		r = data_ext(r,8);
+						s= data_ext(s,8);
+						d = data_ext(d,8);
+	}
+if(sign(s)==sign(d))
+		cpu.eflags.OF=sign(s)!=sign(r)?1:0;
+else  cpu.eflags.OF=0;
+
+
+}
+
+void set_CF_sub(uint32_t r,uint32_t s,size_t data_size)
+{
+	s=data_deal(s,data_size);
+	cpu.eflags.CF=s?!(r<(~s+1)):0;
 }
 
 void set_OF_sub(uint32_t r,uint32_t s,uint32_t d,size_t size)
@@ -158,7 +184,7 @@ void set_OF_CF_mul(uint64_t r,uint32_t d,uint32_t res,size_t size)
 	cpu.eflags.CF=cpu.eflags.OF= (((r>>32)|0x00000000)>0);
 }
 
-void set_CF_OF_imul(int64_t r,int32_t d,int32_t s,size_t size)
+void set_OF_CF_imul(int64_t r,int32_t d,int32_t s,size_t size)
 {
 	if(size==32)
 	cpu.eflags.CF=cpu.eflags.OF=!((((r>>31)^0x1FFFFFFFF)==0)|(((r>>31)|0x000000000)==0));
@@ -206,7 +232,7 @@ set_PF(res);
 	set_SF(res,data_size);
 	set_ZF(res,data_size);
 	set_OF_sub(res,src,dest,data_size);
-	set_CF_sub(res,src,dest,data_size);
+	set_CF_sub(res,src,data_size);
 	return forReturn(res,64,data_size);
 }
 
@@ -219,6 +245,8 @@ set_PF(res);
 	set_ZF(res,data_size);
 	set_OF_sbb(res,src,dest,data_size);
 	set_CF_sbb(res,src,dest,data_size);
+
+	return forReturn(res,32,data_size);
 }
 
 uint64_t alu_mul(uint32_t src, uint32_t dest, size_t data_size)
