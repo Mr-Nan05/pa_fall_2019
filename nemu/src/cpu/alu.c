@@ -84,20 +84,20 @@ void set_OF_add(uint32_t result,uint32_t src,uint32_t dest,size_t data_size) {
 	}
 }
 
-/*void set_OF_add(uint32_t r, uint32_t s, uint32_t d, size_t size)
+void set_OF_add(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
 
 	if (size == 8)
 	{
-		r = data_ext(r, 8);
-		s = data_ext(s, 8);
-		d = data_ext(d, 8);
+		r=sign_ext(r&0xFF,8);
+			s=sign_ext(s&0xFF,8);
+			d=sign_ext(d&0xFF,8);
 	}
 	else if (size == 16)
 	{
-		r = data_ext(r, 16);
-		s = data_ext(s, 16);
-		d = data_ext(d, 16);
+		r=sign_ext(r&0xFFFF,16);
+			s=sign_ext(s&0xFFFF,16);
+			d=sign_ext(d&0xFFFF,16);
 	}
 
 	if (sign(s) == sign(d))
@@ -109,7 +109,7 @@ void set_OF_add(uint32_t result,uint32_t src,uint32_t dest,size_t data_size) {
 	}
 	else
 		cpu.eflags.OF = 0;
-}*/
+}
 
 void set_CF_adc(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
