@@ -1,6 +1,3 @@
-#include "nemu.h"
-#include "cpu/fpu.h"
-
 FPU fpu;
 // special values
 FLOAT p_zero, n_zero, p_inf, n_inf, p_nan, n_nan;
@@ -11,55 +8,71 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 
 	// normalization
 	bool overflow = false; // true if the result is INFINITY or 0 during normalize
+
+    //printf("%llx",sig_grs);
 	if((sig_grs >> (23 + 3)) > 1 || exp < 0) {
 		// normalize toward right
 		while((((sig_grs >> (23 + 3)) > 1) && exp < 0xff) // condition 1
 			|| // or
 			(sig_grs > 0x04 && exp < 0) // condition 2
 			) {
+
 			/* TODO: shift right, pay attention to sticky bit*/
-			uint32_t sticky=0;
-			sticky=sig_grs & 0x1;
-			sig_grs=sig_grs>>1;
-			sig_grs=sig_grs|sticky;
-			exp++;
+			if((sig_grs&0x1)!=0){
+                sig_grs>>=1;
+                sig_grs|=0x1;
+            }
+            else {
+                sig_grs>>=1;
+                //sig_grs&=0xfffffffffffffffe;
+            }
+            exp++;
+            //printf("%x %llx ",exp,sig_grs);
+
 		}
 
 		if(exp >= 0xff) {
 			/* TODO: assign the number to infinity */
 			exp=0xff;
-			sig_grs=0;
+            sig_grs=0;
 			overflow = true;
 		}
 		if(exp == 0) {
 			// we have a denormal here, the exponent is 0, but means 2^-126, 
 			// as a result, the significand should shift right once more
 			/* TODO: shift right, pay attention to sticky bit*/
-			uint32_t sticky=0;
-			sticky=sig_grs & 0x1;
-			sig_grs=sig_grs>>1;
-			sig_grs=sig_grs|sticky;
+			if((sig_grs&0x1)!=0){
+                sig_grs>>=1;
+                sig_grs|=0x1;
+            }
+            else{
+                sig_grs>>=1;
+            }
 		}
 		if(exp < 0) { 
 			/* TODO: assign the number to zero */
 			exp=0;
-			sig_grs=0;
+            sig_grs=0;
 			overflow = true;
 		}
 	} else if(((sig_grs >> (23 + 3)) == 0) && exp > 0) {
 		// normalize toward left
 		while(((sig_grs >> (23 + 3)) == 0) && exp > 0) {
 			/* TODO: shift left */
-			sig_grs=sig_grs<<1;
-			exp--;
+			sig_grs<<=1;
+            exp--;
 		}
 		if(exp == 0) {
 			// denormal
 			/* TODO: shift right, pay attention to sticky bit*/
-			uint32_t sticky=0;
-			sticky=sig_grs & 0x1;
-			sig_grs=sig_grs>>1;
-			sig_grs=sig_grs|sticky;
+			if((sig_grs&0x3)!=0){
+                sig_grs>>=1;
+                sig_grs|=0x1;
+            }
+            else{
+                sig_grs>>=1;
+                sig_grs&=0xfffffffe;
+            }
 		}
 	} else if(exp == 0 && sig_grs >> (23 + 3) == 1) {
 		// two denormals result in a normal
@@ -68,31 +81,26 @@ inline uint32_t internal_normalize(uint32_t sign, int32_t exp, uint64_t sig_grs)
 
 	if(!overflow) {
 		/* TODO: round up and remove the GRS bits */
-		uint32_t grs=0;
-		grs=sig_grs & 0x7;
-		if(grs<=3 && grs>=0)
-			sig_grs=sig_grs>>3;
-		else if(grs==4)
-		    {
-				uint32_t flag= sig_grs&0x8;
-				if(flag)
-					sig_grs=(sig_grs>>3)+1;
-				else
-					sig_grs= sig_grs>>3;
-			}
-		else if(grs>=5 && grs<=7)
-				sig_grs=(sig_grs>>3)+1;
+		if(((sig_grs&0x7)>4)||((sig_grs&0x7)==4&&((sig_grs&0x8)==8))){
+            sig_grs+=0x8;
+            sig_grs>>=3;
+            while((sig_grs>>23)>1){
+                if((sig_grs&0x3)==3)sig_grs+=2;
+                exp++;
+                sig_grs>>=1;
+                if(exp>=0xff){
+                    exp=0xff;
+                    sig_grs=0;
+                }
+            }
+        }
+        else{
+            sig_grs>>=3;
+        }
+        sig_grs&=0x7fffff;
+        return sig_grs+(exp<<23)+(sign<<31);
 	}
 
-	if((sig_grs>>23)>1)
-	{
-		sig_grs=sig_grs>>1;
-		exp++;
-	}
-	if(exp>0xff)
-		exp=-1;
-
-	sig_grs=sig_grs&0x7FFFFF;
 
 	FLOAT f;
 	f.sign = sign;
@@ -150,7 +158,7 @@ uint32_t internal_float_add(uint32_t b, uint32_t a) {
 	uint32_t shift = 0;
 
 	/* TODO: shift = ? */
-	shift=(fb.exponent==0?fb.exponent+1:fb.exponent)-(fa.exponent==0?fa.exponent+1:fa.exponent);
+	shift=fb.exponent-(sig_b>>23)-fa.exponent+(sig_a>>23);
 
 	sig_a = (sig_a << 3); // guard, round, sticky
 	sig_b = (sig_b << 3);
@@ -174,7 +182,8 @@ uint32_t internal_float_add(uint32_t b, uint32_t a) {
 	else { f.sign = 0; }
 
 	uint32_t exp_res = fb.exponent;
-	return internal_normalize(f.sign, exp_res, sig_res);
+	//printf("%x,%x,%x\n",f.sign,exp_res,sig_res);
+    return internal_normalize(f.sign, exp_res, sig_res);
 }
 
 CORNER_CASE_RULE corner_sub[] = {
@@ -251,7 +260,8 @@ uint32_t internal_float_mul(uint32_t b, uint32_t a) {
 	uint32_t exp_res = 0;
 
 	/* TODO: exp_res = ? leave space for GRS bits. */
-	exp_res=fa.exponent+fb.exponent-127-20;
+    exp_res=fa.exponent-127+fb.exponent-127+127-23;
+    sig_res<<=3;
 	return internal_normalize(f.sign, exp_res, sig_res);
 }
 
