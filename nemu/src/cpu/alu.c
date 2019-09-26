@@ -60,20 +60,17 @@ void set_CF_add(uint32_t result, uint32_t src, size_t data_size)
 
 void set_OF_add(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
-	switch (size)
+
+	if(size==8)
 	{
-	case 16:
-		r = data_ext(r, 16);
-		s = data_ext(s, 16);
-		d = data_ext(d, 16);
-		break;
-	case 8:
-		r = data_ext(r, 8);
+r = data_ext(r, 8);
 		s = data_ext(s, 8);
 		d = data_ext(d, 8);
-		break;
-	default:
-		break;
+	}else if(size==16)
+	{
+r = data_ext(r, 16);
+		s = data_ext(s, 16);
+		d = data_ext(d, 16);
 	}
 
 	if (sign(s) == sign(d))
