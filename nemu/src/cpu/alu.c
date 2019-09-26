@@ -141,8 +141,8 @@ else  cpu.eflags.OF=0;
 	else
 	{
 		cpu.eflags.OF = 0;
-	}*/
-}
+	}
+}*/
 
 void set_CF_sub(uint32_t r, uint32_t s, size_t data_size)
 {
