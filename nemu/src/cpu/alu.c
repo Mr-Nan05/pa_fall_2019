@@ -7,10 +7,14 @@ uint32_t data_deal(uint32_t data, size_t data_size)
 
 uint32_t data_ext(uint32_t data, int n)
 {
-	if (n == 16)
-		return sign_ext(data & 0xFFFF, 16);
-	else if (n == 8)
-		return sign_ext(data & 0xFF, 8);
+	switch(n)
+	{
+		case 8:return sign_ext(data&0xFF,8);
+		break;
+		case 16:return sign_ext(data&0xFFFF,16);
+		break;
+		default:break;
+	}
 }
 
 uint32_t forReturn(uint32_t res, int n, size_t data_size)
