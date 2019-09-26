@@ -13,7 +13,7 @@ uint32_t data_ext(uint32_t data, int n)
 		break;
 		case 16:return sign_ext(data&0xFFFF,16);
 		break;
-		default:break;
+		default:return data;
 	}
 }
 
