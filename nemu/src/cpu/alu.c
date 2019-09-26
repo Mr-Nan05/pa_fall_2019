@@ -262,7 +262,7 @@ uint32_t res=0;
 	set_ZF(res, data_size);
 
 	return res & (0xFFFFFFFF >> (32 - data_size));
-}
+}*/
 	uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 	{
 		uint32_t res = 0;
@@ -274,7 +274,7 @@ uint32_t res=0;
 		set_OF_sub(res, src, dest, data_size);
 		set_CF_sub(res, src, data_size);
 		return forReturn(res, 64, data_size);
-	}*/
+	}
 
 	uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
 	{
