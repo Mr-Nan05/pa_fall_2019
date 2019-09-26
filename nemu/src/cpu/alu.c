@@ -7,12 +7,12 @@ uint32_t data_deal(uint32_t data, size_t data_size)
 
 uint32_t data_ext(uint32_t data, int n)
 {
-if(n==8)
-return sign_ext(data&0xFF,8);
-else if(n==8)
-return sign_ext(data&0xFFFF,16);
-else return data;
-
+	if (n == 8)
+		return sign_ext(data & 0xFF, 8);
+	else if (n == 8)
+		return sign_ext(data & 0xFFFF, 16);
+	else
+		return data;
 }
 
 uint32_t forReturn(uint32_t res, int n, size_t data_size)
@@ -58,17 +58,44 @@ void set_CF_add(uint32_t result, uint32_t src, size_t data_size)
 	cpu.eflags.CF = result < src;
 }
 
-void set_OF_add(uint32_t r, uint32_t s, uint32_t d, size_t size)
+void set_OF_add(uint32_t result,uint32_t src,uint32_t dest,size_t data_size) {
+	switch(data_size)
+	{
+		case 8:
+			result=sign_ext(result&0xFF,8);
+			src=sign_ext(src&0xFF,8);
+			dest=sign_ext(dest&0xFF,8);
+			break;
+		case 16:
+			result=sign_ext(result&0xFFFF,16);
+			src=sign_ext(src&0xFFFF,16);
+			dest=sign_ext(dest&0xFFFF,16);
+			break;
+		default:break;
+	}
+	if(sign(src)==sign(dest)){
+		if(sign(src)!=sign(result))
+			cpu.eflags.OF=1;
+		else
+			cpu.eflags.OF=0;
+	}
+	else{
+		cpu.eflags.OF=0;
+	}
+}
+
+/*void set_OF_add(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
 
-	if(size==8)
+	if (size == 8)
 	{
-r = data_ext(r, 8);
+		r = data_ext(r, 8);
 		s = data_ext(s, 8);
 		d = data_ext(d, 8);
-	}else if(size==16)
+	}
+	else if (size == 16)
 	{
-r = data_ext(r, 16);
+		r = data_ext(r, 16);
 		s = data_ext(s, 16);
 		d = data_ext(d, 16);
 	}
@@ -82,7 +109,7 @@ r = data_ext(r, 16);
 	}
 	else
 		cpu.eflags.OF = 0;
-}
+}*/
 
 void set_CF_adc(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
@@ -95,22 +122,24 @@ void set_CF_adc(uint32_t r, uint32_t s, uint32_t d, size_t size)
 		cpu.eflags.CF = r < s ? 1 : 0;
 }
 
-void set_OF_adc(uint32_t r,uint32_t s,uint32_t d,size_t size)
+void set_OF_adc(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
-	if(size==16)
+	if (size == 16)
 	{
-		 data_ext(r,16);
-			s = data_ext(s,16);
-			d = data_ext(d,16);
-	}else if(size==8)
-	{
-		r = data_ext(r,8);
-						s= data_ext(s,8);
-						d = data_ext(d,8);
+		data_ext(r, 16);
+		s = data_ext(s, 16);
+		d = data_ext(d, 16);
 	}
-if(sign(s)==sign(d))
-		cpu.eflags.OF=sign(s)!=sign(r)?1:0;
-else  cpu.eflags.OF=0;
+	else if (size == 8)
+	{
+		r = data_ext(r, 8);
+		s = data_ext(s, 8);
+		d = data_ext(d, 8);
+	}
+	if (sign(s) == sign(d))
+		cpu.eflags.OF = sign(s) != sign(r) ? 1 : 0;
+	else
+		cpu.eflags.OF = 0;
 }
 
 /* void set_OF_adc(uint32_t result, uint32_t src, uint32_t dest, size_t data_size)
@@ -223,17 +252,18 @@ void set_OF_CF_imul(int64_t r, int32_t d, int32_t s, size_t size)
 		cpu.eflags.CF = cpu.eflags.OF = !((((r >> 7) ^ 0x1FF) == 0) | (((r >> 7) | 0x000) == 0));
 }
 
-uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size) {
-	uint32_t res=0;
-	res=dest+src;
-	
-	set_CF_add(res,src,data_size);
-	set_OF_add(res,src,dest,data_size);
-	set_PF(res);
-	set_SF(res,data_size);
-	set_ZF(res,data_size);	
+uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
+{
+	uint32_t res = 0;
+	res = dest + src;
 
-	return res&(0xFFFFFFFF>>(32-data_size));
+	set_CF_add(res, src, data_size);
+	set_OF_add(res, src, dest, data_size);
+	set_PF(res);
+	set_SF(res, data_size);
+	set_ZF(res, data_size);
+
+	return res & (0xFFFFFFFF >> (32 - data_size));
 }
 
 /* uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size)
@@ -249,17 +279,17 @@ uint32_t alu_add(uint32_t src, uint32_t dest, size_t data_size) {
 	return forReturn(res, 32, data_size);
 }*/
 
- uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
+uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
 {
-uint32_t res=0;
-	res=dest+src+cpu.eflags.CF;
-	
-	set_CF_adc(res,src,dest,data_size);
-	set_OF_adc(res,src,dest,data_size);
+	uint32_t res = 0;
+	res = dest + src + cpu.eflags.CF;
+
+	set_CF_adc(res, src, dest, data_size);
+	set_OF_adc(res, src, dest, data_size);
 	set_PF(res);
-	set_SF(res,data_size);
-	set_ZF(res,data_size);	
-	return forReturn(res,32,data_size);
+	set_SF(res, data_size);
+	set_ZF(res, data_size);
+	return forReturn(res, 32, data_size);
 }
 
 /*uint32_t alu_adc(uint32_t src, uint32_t dest, size_t data_size)
@@ -275,179 +305,179 @@ uint32_t res=0;
 
 	return res & (0xFFFFFFFF >> (32 - data_size));
 }*/
-	uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
-	{
-		uint32_t res = 0;
-		res = data_deal(dest, data_size) - data_deal(src, data_size);
+uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
+{
+	uint32_t res = 0;
+	res = data_deal(dest, data_size) - data_deal(src, data_size);
 
-		set_PF(res);
-		set_SF(res, data_size);
-		set_ZF(res, data_size);
-		set_OF_sub(res, src, dest, data_size);
-		set_CF_sub(res, src, data_size);
-		return forReturn(res, 64, data_size);
+	set_PF(res);
+	set_SF(res, data_size);
+	set_ZF(res, data_size);
+	set_OF_sub(res, src, dest, data_size);
+	set_CF_sub(res, src, data_size);
+	return forReturn(res, 64, data_size);
+}
+
+uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
+{
+	uint32_t res = 0;
+	res = data_deal(dest, data_size) - data_deal(src, data_size + cpu.eflags.CF);
+	set_PF(res);
+	set_SF(res, data_size);
+	set_ZF(res, data_size);
+	set_OF_sbb(res, src, dest, data_size);
+	set_CF_sbb(res, src, dest, data_size);
+
+	return forReturn(res, 32, data_size);
+}
+
+uint64_t alu_mul(uint32_t src, uint32_t dest, size_t data_size)
+{
+	uint64_t res = 0;
+	res = (uint64_t)dest * src;
+	set_OF_CF_mul(res, dest, src, data_size);
+	return (uint64_t)dest * src;
+}
+
+int64_t alu_imul(int32_t src, int32_t dest, size_t data_size)
+{
+	int64_t res = 0;
+	res = (int64_t)dest * src;
+	set_OF_CF_imul(res, dest, src, data_size);
+	return (uint64_t)dest * src;
+}
+
+// need to implement alu_mod before testing
+uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
+{
+	return (uint32_t)(dest / src);
+}
+
+// need to implement alu_imod before testing
+int32_t alu_idiv(int64_t src, int64_t dest, size_t data_size)
+{
+	return (uint32_t)(dest / src);
+}
+
+uint32_t alu_mod(uint64_t src, uint64_t dest)
+{
+	return dest % src;
+}
+
+int32_t alu_imod(int64_t src, int64_t dest)
+{
+	return dest % src;
+}
+
+uint32_t alu_and(uint32_t src, uint32_t dest, size_t data_size)
+{
+	cpu.eflags.CF = 0;
+	cpu.eflags.OF = 0;
+	set_PF(dest & src);
+	set_ZF(dest & src, data_size);
+	set_SF(dest & src, data_size);
+	return forReturn(dest & src, 32, data_size);
+}
+
+uint32_t alu_xor(uint32_t src, uint32_t dest, size_t data_size)
+{
+	cpu.eflags.CF = 0;
+	cpu.eflags.OF = 0;
+	set_PF(dest ^ src);
+	set_ZF(dest ^ src, data_size);
+	set_SF(dest ^ src, data_size);
+	return forReturn(dest ^ src, 32, data_size);
+}
+
+uint32_t alu_or(uint32_t src, uint32_t dest, size_t data_size)
+{
+	cpu.eflags.CF = 0;
+	cpu.eflags.OF = 0;
+	set_PF(dest | src);
+	set_ZF(dest | src, data_size);
+	set_SF(dest | src, data_size);
+	return forReturn(dest | src, 32, data_size);
+}
+
+uint32_t alu_shl(uint32_t src, uint32_t dest, size_t data_size)
+{
+	if (!src)
+		return dest;
+	dest = data_deal(dest, data_size);
+	while (src--)
+	{
+		cpu.eflags.CF = ((dest & (0x80000000 >> (32 - data_size))) > 0);
+		dest *= 2;
+		set_PF(dest);
+		set_SF(dest, data_size);
+		set_ZF(dest, data_size);
 	}
+	return forReturn(dest, 32, data_size);
+}
 
-	uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
+uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
+{
+
+	dest = data_deal(dest, data_size);
+	while (src--)
 	{
-		uint32_t res = 0;
-		res = data_deal(dest, data_size) - data_deal(src, data_size + cpu.eflags.CF);
-		set_PF(res);
-		set_SF(res, data_size);
-		set_ZF(res, data_size);
-		set_OF_sbb(res, src, dest, data_size);
-		set_CF_sbb(res, src, dest, data_size);
-
-		return forReturn(res, 32, data_size);
+		cpu.eflags.CF = ((dest & 0x00000001) > 0);
+		dest /= 2;
+		set_PF(dest);
+		set_SF(dest, data_size);
+		set_ZF(dest, data_size);
 	}
+	return forReturn(dest, 32, data_size);
+}
 
-	uint64_t alu_mul(uint32_t src, uint32_t dest, size_t data_size)
+uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size)
+{
+
+	if (!src)
+		return dest;
+	dest = data_deal(dest, data_size);
+	while (src--)
 	{
-		uint64_t res = 0;
-		res = (uint64_t)dest * src;
-		set_OF_CF_mul(res, dest, src, data_size);
-		return (uint64_t)dest * src;
-	}
-
-	int64_t alu_imul(int32_t src, int32_t dest, size_t data_size)
-	{
-		int64_t res = 0;
-		res = (int64_t)dest * src;
-		set_OF_CF_imul(res, dest, src, data_size);
-		return (uint64_t)dest * src;
-	}
-
-	// need to implement alu_mod before testing
-	uint32_t alu_div(uint64_t src, uint64_t dest, size_t data_size)
-	{
-		return (uint32_t)(dest / src);
-	}
-
-	// need to implement alu_imod before testing
-	int32_t alu_idiv(int64_t src, int64_t dest, size_t data_size)
-	{
-		return (uint32_t)(dest / src);
-	}
-
-	uint32_t alu_mod(uint64_t src, uint64_t dest)
-	{
-		return dest % src;
-	}
-
-	int32_t alu_imod(int64_t src, int64_t dest)
-	{
-		return dest % src;
-	}
-
-	uint32_t alu_and(uint32_t src, uint32_t dest, size_t data_size)
-	{
-		cpu.eflags.CF = 0;
-		cpu.eflags.OF = 0;
-		set_PF(dest & src);
-		set_ZF(dest & src, data_size);
-		set_SF(dest & src, data_size);
-		return forReturn(dest & src, 32, data_size);
-	}
-
-	uint32_t alu_xor(uint32_t src, uint32_t dest, size_t data_size)
-	{
-		cpu.eflags.CF = 0;
-		cpu.eflags.OF = 0;
-		set_PF(dest ^ src);
-		set_ZF(dest ^ src, data_size);
-		set_SF(dest ^ src, data_size);
-		return forReturn(dest ^ src, 32, data_size);
-	}
-
-	uint32_t alu_or(uint32_t src, uint32_t dest, size_t data_size)
-	{
-		cpu.eflags.CF = 0;
-		cpu.eflags.OF = 0;
-		set_PF(dest | src);
-		set_ZF(dest | src, data_size);
-		set_SF(dest | src, data_size);
-		return forReturn(dest | src, 32, data_size);
-	}
-
-	uint32_t alu_shl(uint32_t src, uint32_t dest, size_t data_size)
-	{
-		if (!src)
-			return dest;
-		dest = data_deal(dest, data_size);
-		while (src--)
-		{
-			cpu.eflags.CF = ((dest & (0x80000000 >> (32 - data_size))) > 0);
-			dest *= 2;
-			set_PF(dest);
-			set_SF(dest, data_size);
-			set_ZF(dest, data_size);
-		}
-		return forReturn(dest, 32, data_size);
-	}
-
-	uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
-	{
-
-		dest = data_deal(dest, data_size);
-		while (src--)
-		{
-			cpu.eflags.CF = ((dest & 0x00000001) > 0);
-			dest /= 2;
-			set_PF(dest);
-			set_SF(dest, data_size);
-			set_ZF(dest, data_size);
-		}
-		return forReturn(dest, 32, data_size);
-	}
-
-	uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size)
-	{
-
-		if (!src)
-			return dest;
-		dest = data_deal(dest, data_size);
-		while (src--)
-		{
-			cpu.eflags.CF = ((dest & 0x00000001) > 0);
-			if (sign(dest) == 1)
-				dest = (0x80000000 >> (32 - data_size)) | (dest / 2);
-			else
-				dest /= 2;
-			set_PF(dest);
-			set_SF(dest, data_size);
-			set_ZF(dest, data_size);
-		}
-		return forReturn(dest, 32, data_size);
-	}
-
-	uint32_t alu_sal(uint32_t src, uint32_t dest, size_t data_size)
-	{
-		dest = forReturn(dest, 32, data_size);
-		while (src--)
-		{
-			cpu.eflags.CF = ((dest & (0x80000000 >> (32 - data_size))) > 0);
-			dest *= 2;
-			set_PF(dest);
-			set_SF(dest, data_size);
-			set_ZF(dest, data_size);
-		}
-		return forReturn(dest, 32, data_size);
-	}
-	uint32_t alu_neg(uint32_t src, size_t data_size)
-	{
-
-		uint32_t res = 0;
-		if (src == 0)
-			cpu.eflags.CF = 0;
+		cpu.eflags.CF = ((dest & 0x00000001) > 0);
+		if (sign(dest) == 1)
+			dest = (0x80000000 >> (32 - data_size)) | (dest / 2);
 		else
-			cpu.eflags.CF = 1;
-
-		res = ~src + 1;
-
-		set_OF_add(res, (~src), 1, data_size);
-		set_PF(res);
-		set_SF(res, data_size);
-		set_ZF(res, data_size);
-
-		return forReturn(res, 32, data_size);
+			dest /= 2;
+		set_PF(dest);
+		set_SF(dest, data_size);
+		set_ZF(dest, data_size);
 	}
+	return forReturn(dest, 32, data_size);
+}
+
+uint32_t alu_sal(uint32_t src, uint32_t dest, size_t data_size)
+{
+	dest = forReturn(dest, 32, data_size);
+	while (src--)
+	{
+		cpu.eflags.CF = ((dest & (0x80000000 >> (32 - data_size))) > 0);
+		dest *= 2;
+		set_PF(dest);
+		set_SF(dest, data_size);
+		set_ZF(dest, data_size);
+	}
+	return forReturn(dest, 32, data_size);
+}
+uint32_t alu_neg(uint32_t src, size_t data_size)
+{
+
+	uint32_t res = 0;
+	if (src == 0)
+		cpu.eflags.CF = 0;
+	else
+		cpu.eflags.CF = 1;
+
+	res = ~src + 1;
+
+	set_OF_add(res, (~src), 1, data_size);
+	set_PF(res);
+	set_SF(res, data_size);
+	set_ZF(res, data_size);
+
+	return forReturn(res, 32, data_size);
+}
