@@ -58,7 +58,7 @@ void set_CF_add(uint32_t result, uint32_t src, size_t data_size)
 	cpu.eflags.CF = result < src;
 }
 
-void set_OF_add(uint32_t result,uint32_t src,uint32_t dest,size_t data_size) {
+/*void set_OF_add(uint32_t result,uint32_t src,uint32_t dest,size_t data_size) {
 	switch(data_size)
 	{
 		case 8:
@@ -82,7 +82,7 @@ void set_OF_add(uint32_t result,uint32_t src,uint32_t dest,size_t data_size) {
 	else{
 		cpu.eflags.OF=0;
 	}
-}
+}*/
 
 void set_OF_add(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
