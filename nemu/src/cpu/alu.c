@@ -203,14 +203,9 @@ void set_OF_sub(uint32_t r, uint32_t s, uint32_t d, size_t size)
 //point1
 void set_CF_sbb(uint32_t r, uint32_t s, uint32_t d, size_t size)
 {
-	/*r = data_deal(r, size);
+	r = data_deal(r, size);
 	s = data_deal(s, size);
-	d = data_deal(d, size); */
-
-r=sign_ext(r&(0xFFFFFFFF>>(32-size)),size);
-	d=sign_ext(d&(0xFFFFFFFF>>(32-size)),size);
-	s=sign_ext(s&(0xFFFFFFFF>>(32-size)),size);
-
+	d = data_deal(d, size);
 	if (s == 0)
 		cpu.eflags.CF = r > d ? 1 : 0;
 	else
@@ -326,7 +321,7 @@ uint32_t alu_sub(uint32_t src, uint32_t dest, size_t data_size)
 uint32_t alu_sbb(uint32_t src, uint32_t dest, size_t data_size)
 {
 	uint32_t res = 0;
-	res = data_deal(dest, data_size) - data_deal(src, data_size + cpu.eflags.CF);
+	res = data_deal(dest, data_size) - (data_deal(src, data_size )+ cpu.eflags.CF);
 	set_PF(res);
 	set_SF(res, data_size);
 	set_ZF(res, data_size);
