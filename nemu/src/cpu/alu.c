@@ -415,19 +415,34 @@ uint32_t alu_shl(uint32_t src, uint32_t dest, size_t data_size)
 	return forReturn(dest, 32, data_size);
 }
 
-uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
+/*uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size)
 {
-uint32_t res=0;
+
 	dest = data_deal(dest, data_size);
 	while (src--)
 	{
 		cpu.eflags.CF = ((dest & 0x00000001) > 0);
 		dest /= 2;
-		set_PF(res);
-		set_SF(res, data_size);
-		set_ZF(res, data_size);
+		set_PF(dest);
+		set_SF(dest, data_size);
+		set_ZF(dest, data_size);
 	}
-	return forReturn(res, 32, data_size);
+	return forReturn(dest, 32, data_size);
+} */
+
+uint32_t alu_shr(uint32_t src, uint32_t dest, size_t data_size) {
+	uint32_t res=0;
+	dest=dest&(0xFFFFFFFF>>(32-data_size));
+	while(src--)
+	{
+		cpu.eflags.CF= ((dest&0x00000001)>0);
+		dest/=2;
+		res=dest;
+		set_PF(res);
+		set_SF(res,data_size);
+		set_ZF(res,data_size);
+	}
+	return res&(0xFFFFFFFF>>(32-data_size)); 
 }
 
 uint32_t alu_sar(uint32_t src, uint32_t dest, size_t data_size)
