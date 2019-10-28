@@ -69,7 +69,7 @@ make_instr_func(jmp_far_imm){
         cpu.segReg[SREG_CS].val = ptr1.val;
         load_sreg(SREG_CS);
 
-        return 0;
+        return 0;       
 #else
         printf("please implement ljmp\n");assert(0);
 #endif
