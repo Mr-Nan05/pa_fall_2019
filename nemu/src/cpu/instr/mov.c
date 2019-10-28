@@ -25,81 +25,61 @@ make_instr_impl_2op(mov, o, a, v)
 //make_instr_impl_2op(mov, rm, s, w)
 
 
-make_instr_func(mov_c2r_l) {
+make_instr_func(mov_c2r_l){
+	int len = 1;
+	opr_src.data_size = opr_dest.data_size = 32;
 
-	OPERAND src, dest;
+	MODRM modrm;
+	modrm.val = instr_fetch(eip + 1, 1);
+	opr_src.type = OPR_CREG;
+	opr_src.addr = modrm.reg_opcode;
 
-	dest.data_size = 32;
+	len += modrm_rm(eip + 1, &opr_dest);
 
-	src.data_size = 32;
+	operand_read(&opr_src);
+	opr_dest.val = opr_src.val;
+	operand_write(&opr_dest);
 
-
-
-	modrm_c_r(eip + 1, &src, &dest);
-
-	operand_read(&src);
-
-	//printf("dest addr: %d\n", dest.addr);
-
-	dest.val = src.val;
-
-	operand_write(&dest);
-
-	//printf("here2\n");
-
-	return 2;
-
+	return len;
 }
 
+make_instr_func(mov_r2c_l){
+	int len = 1;
+	opr_src.data_size = opr_dest.data_size = 32;
 
+	len += modrm_rm(eip + 1, &opr_src);
 
-make_instr_func(mov_r2c_l) {
+	MODRM modrm;
+	modrm.val = instr_fetch(eip + 1, 1);
+	opr_dest.type = OPR_CREG;
+	opr_dest.addr = modrm.reg_opcode;
 
-	OPERAND src, dest;
-
-	src.data_size = 32;
-
-	dest.data_size = 32;
-
-
-
-	modrm_c_r(eip + 1, &dest, &src);
-
-	operand_read(&src);
-
-	dest.val = src.val;
-
-	operand_write(&dest);
-
-	//load_sreg(dest.addr);
-
-	return 2;
-
+	operand_read(&opr_src);
+	opr_dest.val = opr_src.val;
+	operand_write(&opr_dest);
+	
+	return len;
 }
 
+make_instr_func(mov_rm2s_w){
+	int len = 1;
+	opr_src.data_size = opr_dest.data_size = 16;
 
+	len += modrm_rm(eip + 1, &opr_src);
 
-make_instr_func(mov_rm2s_w) {
+	MODRM modrm;
+	modrm.val = instr_fetch(eip + 1, 1);
+	opr_dest.type = OPR_SREG;
+	opr_dest.addr = modrm.reg_opcode;
 
-	OPERAND rm, s;
+	operand_read(&opr_src);
+	opr_dest.val = opr_src.val;
+	operand_write(&opr_dest);
+	load_sreg(opr_dest.addr);
 
-	rm.data_size = s.data_size = 16;
-
-
-
-	modrm_rm_s(eip + 1, &rm, &s);
-
-	operand_read(&rm);
-
-	s.val = rm.val;
-
-	operand_write(&s);
-
-	load_sreg(s.addr);
-
-	return 2;
-
+	return len;
 }
+
 make_instr_func(mov_zrm82r_v) {
 	int len = 1;
 	OPERAND r, rm;
