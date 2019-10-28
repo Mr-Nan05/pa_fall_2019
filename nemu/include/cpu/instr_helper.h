@@ -265,15 +265,7 @@ static inline bool inv_cc(int condition);
 
 static inline bool inv_cc(int condition) {
 
-	/*
 
-	printf("Please implement cc condition in instr_helper.h\n");
-
-	assert(0);
-
-	return false;
-
-	*/
 
 	assert(condition >=1 && condition <= 17);
 
