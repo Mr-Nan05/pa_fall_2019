@@ -164,69 +164,163 @@ void print_asm_3(char *instr, char *suffix, uint8_t len, OPERAND *opr_1, OPERAND
 // conditions
 // possible condition: e, a, ae, b, be, o, p, s , ne, na, no, np, ns, g, ge, l, le, ecxz
 
-static inline bool inv_cc();
+static inline bool inv_cc(int condition);
+
+
 
 #define condition_e \
-	cpu.eflags.ZF==1
+ 	inv_cc(1)
+
+
 
 #define condition_a \
-	cpu.eflags.CF==0 && cpu.eflags.ZF==0
+	inv_cc(2)
+
+
 
 #define condition_ae \
-	cpu.eflags.CF==0 || cpu.eflags.ZF==1
+	inv_cc(3)
+
+
 
 #define condition_b \
-	cpu.eflags.CF==1 && cpu.eflags.ZF==0
+	inv_cc(4)
+
+
 
 #define condition_be \
-	cpu.eflags.CF==1 || cpu.eflags.ZF==1
+	inv_cc(5)
+
+
 
 #define condition_o \
-	cpu.eflags.OF==1
+	inv_cc(6)
+
+
 
 #define condition_p \
-	cpu.eflags.PF==1
+	inv_cc(7)
+
+
 
 #define condition_s \
-	cpu.eflags.SF==1
+	inv_cc(8)
+
+
 
 #define condition_ne \
-	cpu.eflags.ZF==0
+	inv_cc(9)
+
+
 
 #define condition_na \
-	cpu.eflags.CF==1 || cpu.eflags.ZF==1
+	inv_cc(10)
+
+
 
 #define condition_no \
-	cpu.eflags.OF==0
+	inv_cc(11)
+
+
 
 #define condition_np \
-	cpu.eflags.PF==0
+	inv_cc(12)
+
+
 
 #define condition_ns \
-	cpu.eflags.SF==0
+	inv_cc(13)
+
+
 
 #define condition_g \
-	cpu.eflags.SF==cpu.eflags.OF && cpu.eflags.ZF==0
+	inv_cc(14)
+
+
 
 #define condition_ge \
-	cpu.eflags.SF==cpu.eflags.OF || cpu.eflags.ZF==1
+	inv_cc(15)
+
+
 
 #define condition_l \
-	cpu.eflags.SF!=cpu.eflags.OF && cpu.eflags.ZF==0
+	inv_cc(16)
+
+
 
 #define condition_le \
-	cpu.eflags.SF!=cpu.eflags.OF || cpu.eflags.ZF==1
+	inv_cc(17)
+
+
 
 #define condition_ecxz \
 	cpu.ecx == 0
 
-#define condition_c \
-	cpu.eflags.CF==1
 
-static inline bool inv_cc() {
+
+#define condition_c \
+	cpu.eflags.CF
+
+
+
+static inline bool inv_cc(int condition) {
+
+	/*
+
 	printf("Please implement cc condition in instr_helper.h\n");
+
 	assert(0);
+
 	return false;
+
+	*/
+
+	assert(condition >=1 && condition <= 17);
+
+	
+
+	switch (condition) {
+
+		case 1: return cpu.eflags.ZF;
+
+		case 2: return !cpu.eflags.CF && !cpu.eflags.ZF;
+
+		case 3: return !cpu.eflags.CF;
+
+		case 4: return cpu.eflags.CF;
+
+		case 5: return cpu.eflags.CF || cpu.eflags.OF;
+
+		case 6: return cpu.eflags.OF;
+
+		case 7: return cpu.eflags.PF;
+
+		case 8: return cpu.eflags.SF;
+
+		case 9: return !cpu.eflags.ZF;
+
+		case 10: return cpu.eflags.CF || cpu.eflags.ZF;
+
+		case 11: return !cpu.eflags.OF;
+
+		case 12: return !cpu.eflags.PF;
+
+		case 13: return !cpu.eflags.SF;
+
+		case 14: return !cpu.eflags.ZF && cpu.eflags.SF == cpu.eflags.OF;
+
+		case 15: return cpu.eflags.SF == cpu.eflags.OF;
+
+		case 16: return cpu.eflags.SF != cpu.eflags.OF;
+
+		case 17: return cpu.eflags.ZF || cpu.eflags.SF != cpu.eflags.OF;
+
+	}
+
+	return false;
+
 }
+
+
 
 #endif
