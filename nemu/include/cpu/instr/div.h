@@ -1,5 +1,5 @@
-#ifndef __DIV_H__
-#define __DIV_H__
+#ifndef __INSTR_DIV_H__
+#define __INSTR_DIV_H__
 
 make_instr_func(div_rm2a_b);
 make_instr_func(idiv_rm2a_b);

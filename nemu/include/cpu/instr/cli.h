@@ -1,5 +1,5 @@
-#ifndef __CLI_H__
-#define __CLI_H__
+#ifndef __INSTR_CLI_H__
+#define __INSTR_CLI_H__
 
 make_instr_func(cli);
 

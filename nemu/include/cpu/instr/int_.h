@@ -1,5 +1,5 @@
-#ifndef __INT___H_
-#define __INT___H_
+#ifndef __INSTR_INT___H_
+#define __INSTR_INT___H_
 
 make_instr_func(int_);
 
