@@ -51,7 +51,7 @@ extern uint8_t data_size;
 #include "cpu/instr/in.h"
 #include "cpu/instr/out.h"
 #include "cpu/instr/sti.h"
-
+#include "cpu/instr/adc.h"
 
 /* TODO: add more instructions here */
 
