@@ -96,8 +96,7 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
                 }
                 cache_write(paddr_new,len_new,data_tmp,cache);
             } 
-        }
-        if(cache[lineNO+count].flag.tag==mark){
+            if(cache[lineNO+count].flag.tag==mark){
                 cache[lineNO+count].flag.validBit=0;
                 
              memcpy(hw_mem+paddr, &data,len);   //同时写cache和主存
@@ -105,13 +104,9 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
              break;
             }
         }
-        count++;
+          count++;
     }
 
- if(hit_judge==true) return;
-    else{
-        memcpy(hw_mem+paddr, &data,len);
-        return;
-    }
+
 }
 
