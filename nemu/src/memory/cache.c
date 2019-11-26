@@ -50,7 +50,8 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
 
      if(hit_judge==true) return ret;
      else {
-         
+           uint32_t num=0;
+           num=rand()%way;
      }
 
 }
