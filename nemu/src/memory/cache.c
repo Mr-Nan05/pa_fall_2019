@@ -15,3 +15,6 @@ void init_cache(){
             L1_dcache[i].data[j]=0;
     }
 }
+
+
+
