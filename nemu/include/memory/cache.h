@@ -5,6 +5,10 @@
 #include "memory/mmu/page.h"
 #include "memory/mmu/tlb.h"
 
+#define group 128
+#define way 8
+#define line 1024
+
 typedef struct CacheLine{
     union{
         struct{
