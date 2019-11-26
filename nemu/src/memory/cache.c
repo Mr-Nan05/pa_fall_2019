@@ -61,7 +61,9 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
            for(int i=0;i<64;i++)
            cache[lineNO+num].data[i]=hw_mem[paddr_new+i];
 
-           
+           ret = cache_read(paddr,len,cache);
+           return ret;
+
      }
 
 }
@@ -69,7 +71,8 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
 
 void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
 
-
+    uint32_t blockAddress = paddr & 0x3f;
+    
 
 
 }
