@@ -57,6 +57,11 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
            cache[lineNO+num].flag.tag=mark;
 
            uint32_t paddr_new=((paddr>>6)<<6);
+
+           for(int i=0;i<64;i++)
+           cache[lineNO+num].data[i]=hw_mem[paddr_new+i];
+
+           
      }
 
 }
