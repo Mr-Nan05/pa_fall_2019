@@ -52,6 +52,11 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
      else {
            uint32_t num=0;
            num=rand()%way;
+
+           cache[lineNO+num].flag.validBit=1;
+           cache[lineNO+num].flag.tag=mark;
+
+           uint32_t paddr_new=((paddr>>6)<<6);
      }
 
 }
