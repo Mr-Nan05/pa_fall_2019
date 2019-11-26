@@ -76,7 +76,9 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
     uint32_t mark = (paddr>>13) & 0x7ffff;
 
     uint32_t data_tmp = data;
-    
+    uint32_t lineNO = groupNO*way;
+    uint32_t count=0;
+    bo
 
 
 }
