@@ -81,8 +81,14 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
     bool hit_judge = false;
 
     while(count  < way){
+        if((cache[lineNO+count].flag.tag == mark) && (cache[lineNO+count].flag.validBit)){
+            if(len + blockAddress - 1 < 64){
+                for(int i = blockAddress;i < (blockAddress + len); i++){
+                    cach
+                }
+            }
+        }
 
-        
     }
 
 
