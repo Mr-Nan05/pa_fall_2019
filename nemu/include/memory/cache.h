@@ -1,7 +1,10 @@
 #ifdef __CACHE_H__
 #define __CACHE_H__
 
-
+#include "nemu.h"
+#include "memory/mmu/segment.h"
+#include "memory/mmu/page.h"
+#include "memory/mmu/tlb.h"
 
 typedef struct CacheLine{
     union{
@@ -15,3 +18,7 @@ typedef struct CacheLine{
 
     uint8_t data[64];
 }CacheLine;
+
+
+
+#endif
