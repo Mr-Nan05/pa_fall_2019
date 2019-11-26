@@ -87,9 +87,7 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
                     cache[lineNO + count].data[i] = (data_tmp & 0xff);
                     data_tmp >>= way;
                 }
-            }
-        }
-        else{
+            }else{
                 size_t len_new=len+blockAddress-64;
                 uint32_t paddr_new=paddr+(len-len_new);
                 for(int i=blockAddress ;i<64 ;i++){
@@ -98,7 +96,8 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
                 }
                 cache_write(paddr_new,len_new,data_tmp,cache);
             } 
-            if(cache[lineNO+count].flag.tag==mark){
+        }
+        if(cache[lineNO+count].flag.tag==mark){
                 cache[lineNO+count].flag.validBit=0;
                 
              memcpy(hw_mem+paddr, &data,len);   //同时写cache和主存
@@ -114,5 +113,5 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
         memcpy(hw_mem+paddr, &data,len);
         return;
     }
-};
+}
 
