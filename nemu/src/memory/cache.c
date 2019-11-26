@@ -27,6 +27,27 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
     uint32_t count=0;
     bool hit_judge=false;
 
+    while(count < way){
+        if((cache[lineNO+count].flag.tag==mark) && (cache[lineNO+count].flag.validBit)){
+            if(len+blockAddress-1<64){
+                for(int i=blockAddress;i<(len+blockAddress);i++){
+                        ret+=(((uint32_t)cache[lineNO+count].data[i])<<((i-blockAddress)*8));
+                    }
+                }
+            else{
+                size_t len_new=len+blockAddress-64;
+                uint32_t paddr_new=paddr+(len-len_new);
+                for(int i=blockAddress;i<64;i++){
+                    ret+=(((uint32_t)cache[lineNO+count].data[i])<<((i-blockAddress)*8));
+                }
+                ret+=(cache_read(paddr_new,len_new,cache)<<((len-len_new)*8));
+            }
+            hit_judge=true;
+            break;
+        }
+        count++;
+    }
+
     
 
 }
