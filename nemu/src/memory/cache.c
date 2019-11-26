@@ -84,13 +84,35 @@ void cache_write(paddr_t paddr,size_t len,uint32_t data,CacheLine *cache){
         if((cache[lineNO+count].flag.tag == mark) && (cache[lineNO+count].flag.validBit)){
             if(len + blockAddress - 1 < 64){
                 for(int i = blockAddress;i < (blockAddress + len); i++){
-                    cach
+                    cache[lineNO + count].data[i] = (data_tmp & 0xff);
+                    data_tmp >>= way;
                 }
             }
         }
-
+        else{
+                size_t len_new=len+blockAddress-64;
+                uint32_t paddr_new=paddr+(len-len_new);
+                for(int i=blockAddress ;i<64 ;i++){
+                    cache[lineNO+count].data[i]=(data_tmp & 0xff);
+                    data_tmp>>=8;
+                }
+                cache_write(paddr_new,len_new,data_tmp,cache);
+            } 
+            if(cache[lineNO+count].flag.tag==mark){
+                cache[lineNO+count].flag.validBit=0;
+                
+             memcpy(hw_mem+paddr, &data,len);   //同时写cache和主存
+             hit_judge=true;
+             break;
+            }
+        }
+        count++;
     }
 
-
-}
+ if(hit_judge==true) return;
+    else{
+        memcpy(hw_mem+paddr, &data,len);
+        return;
+    }
+};
 
