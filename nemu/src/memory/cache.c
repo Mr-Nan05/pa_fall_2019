@@ -27,6 +27,8 @@ uint32_t cache_read(paddr_t paddr,size_t len,CacheLine *cache){
     uint32_t count=0;
     bool hit_judge=false;
 
+    
+
 }
 
 
