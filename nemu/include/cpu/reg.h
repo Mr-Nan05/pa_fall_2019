@@ -24,7 +24,7 @@ uint32_t val;
 typedef struct {
 // the 16-bit visible part, i.e., the selector
 union {
-74uint16_t val;
+uint16_t val;
 struct {
 uint32_t rpl :2;
 uint32_t ti :1;
