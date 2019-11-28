@@ -23,4 +23,15 @@ void load_sreg(uint8_t sreg)
 	target.val[0] = laddr_read(entry, 4);
 	target.val[1] = laddr_read(entry + 4, 4);
 
+	assert(target.privilege_level >= cpu.segReg[sreg].rpl);
+	assert(target.present==1);
+	assert(target.granularity==1);
+	assert(target.base_15_0==0);
+	assert(target.base_23_16==0);
+	assert(target.base_31_24==0);
+
+	assert(target.limit_15_0==0xffff);
+	assert(target.limit_19_16==0xf);
+
+
 }
