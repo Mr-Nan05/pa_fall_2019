@@ -24,14 +24,18 @@ void load_sreg(uint8_t sreg)
 	target.val[1] = laddr_read(entry + 4, 4);
 
 	assert(target.privilege_level >= cpu.segReg[sreg].rpl);
-	assert(target.present==1);
-	assert(target.granularity==1);
-	assert(target.base_15_0==0);
-	assert(target.base_23_16==0);
-	assert(target.base_31_24==0);
+	assert(target.present == 1);
+	assert(target.granularity == 1);
+	assert(target.base_15_0 == 0);
+	assert(target.base_23_16 == 0);
+	assert(target.base_31_24 == 0);
 
-	assert(target.limit_15_0==0xffff);
-	assert(target.limit_19_16==0xf);
+	assert(target.limit_15_0 == 0xffff);
+	assert(target.limit_19_16 == 0xf);
 
-
+	cpu.segReg[sreg].base = target.base_15_0 + ((uint32_t)target.base_23_16 << 16) + ((uint32_t)target.base_31_24 << 24);
+	cpu.segReg[sreg].limit = target.limit_15_0 + ((uint32_t)target.limit_19_16 << 16);
+	cpu.segReg[sreg].soft_use = target.soft_use;
+	cpu.segReg[sreg].privilege_level = target.privilege_level;
+	cpu.segReg[sreg].type = target.type + (target.segment_type << 4);
 }
