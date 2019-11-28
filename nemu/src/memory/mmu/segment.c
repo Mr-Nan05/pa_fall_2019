@@ -17,4 +17,10 @@ void load_sreg(uint8_t sreg)
 	/* TODO: load the invisibile part of the segment register 'sreg' by reading the GDT.
 	 * The visible part of 'sreg' should be assigned by mov or ljmp already.
 	 */
+	SegDesc target;
+	uint32_t entry = cpu.gdtr.base + (cpu.segReg[sreg].index) * 8;
+
+	target.val[0] = laddr_read(entry, 4);
+	target.val[1] = laddr_read(entry + 4, 4);
+
 }
