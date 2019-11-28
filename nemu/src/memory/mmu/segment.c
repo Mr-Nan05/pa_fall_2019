@@ -1,6 +1,6 @@
 #include "cpu/cpu.h"
 #include "memory/memory.h"
-#include "include/reg.h"
+#include "cpu/reg.h"
 
 // return the linear address from the virtual address and segment selector
 uint32_t segment_translate(uint32_t offset, uint8_t sreg)
