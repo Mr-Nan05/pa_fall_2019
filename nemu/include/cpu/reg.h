@@ -3,6 +3,11 @@
 
 #include "nemu.h"
 
+typedef struct {
+uint32_t limit :16;
+uint32_t base :32;
+}GDTR;
+
 // define the structure of registers
 typedef struct
 {
