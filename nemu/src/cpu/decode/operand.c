@@ -121,6 +121,7 @@ void operand_write(OPERAND *opr)
 			assert(0);
 			break;
 		}
+		break;
 	case OPR_SREG:
 #ifdef IA32_SEG
 		cpu.segReg[opr->addr].val = opr->val;
