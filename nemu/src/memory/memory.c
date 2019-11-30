@@ -48,7 +48,11 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 			uint32_t laddr_new = laddr + (len - len_new);
 			paddr_t paddr = page_translate(laddr);
 			paddr_t paddr_new = page_translate(laddr_new);
+			return (paddr_read(paddr, (len - len_new) + (paddr_new, len_new) << (len - len_new)*8));
 
+		}
+		else {
+			paddr_t paddr = page_translate(laddr);
 		}
 	}
 }
