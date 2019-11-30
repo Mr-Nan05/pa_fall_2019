@@ -10,6 +10,8 @@ paddr_t page_translate(laddr_t laddr)
 
 	paddr_t result = 0;
 	uint32_t offset = (laddr & 0xfff);
+	uint32_t page = ((laddr>>12) & 0x3ff);
+	uint32_t dir = ((laddr>>22) & 0x3ff);
 #else
 	return tlb_read(laddr) | (laddr & PAGE_MASK);
 	;
