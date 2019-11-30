@@ -36,6 +36,7 @@ uint32_t loader()
 	{
 		if (ph->p_type == PT_LOAD)
 		{
+#ifdef IA32_PAGE
 
 			// remove this panic!!!
 			//panic("Please implement the loader");
@@ -45,6 +46,8 @@ uint32_t loader()
 /* TODO: copy the segment from the ELF file to its proper memory area */
 
 /* TODO: zeror the memory area [vaddr + file_sz, vaddr + mem_sz) */
+
+
 
 #ifdef IA32_PAGE
 			/* Record the program break for future use */
