@@ -71,6 +71,10 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 			uint32_t data_tmp1 = 0;
 			uint32_t data_tmp2 = 0;
 
+			data_tmp2 = data >> ((len - len_new)*8);
+			data_tmp1 = data - (data_tmp2 << (len - len_new)*8);
+
+			paddr_write(paddr,(len - len_new),data_tmp1);
 		}
 	}
 
