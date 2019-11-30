@@ -44,8 +44,9 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 	assert(len == 1||len == 2 || len == 4);
 	if(cpu.cr0.pg && cpu.cr0.pe){
 		if((laddr & 0xfff) + len - 1 >= 0x1000){
-			size_t ;en_new = len + (laddr & 0xfff) - 0x1000;
-			uint32
+			size_t len_new = len + (laddr & 0xfff) - 0x1000;
+			uint32_t laddr_new = laddr + (len - len_new);
+			paddr 
 		}
 	}
 }
