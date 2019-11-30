@@ -61,6 +61,8 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 
 void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 {
+	if()
+
 	paddr_write(laddr, len, data);
 }
 
