@@ -68,6 +68,9 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 			uint32_t laddr_new = laddr + (len - len_new);
 			paddr_t paddr = page_translate(laddr);
 			paddr_t paddr_new = page_translate(laddr_new);
+			uint32_t data_tmp1 = 0;
+			uint32_t data_tmp2 = 0;
+
 		}
 	}
 
