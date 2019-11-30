@@ -39,7 +39,10 @@ hw_mem_write(paddr, len, data);
 
 uint32_t laddr_read(laddr_t laddr, size_t len)
 {
-	return paddr_read(laddr, len);
+	//return paddr_read(laddr, len);
+
+	assert(len == 1||len == 2 || len == 4);
+	if(cpu.cr0.pg && cpu.cr0)
 }
 
 void laddr_write(laddr_t laddr, size_t len, uint32_t data)

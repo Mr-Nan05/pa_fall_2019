@@ -25,9 +25,10 @@ paddr_t page_translate(laddr_t laddr)
 	pte_target.val = paddr_read(pt_base + page*4, 4);
 
 	assert(pte_target.present == 1);
-	
+
 	result = (pte_target.page_frame << 12) + offset;
 
+	return result;
 #else
 	return tlb_read(laddr) | (laddr & PAGE_MASK);
 	;
