@@ -64,7 +64,10 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 	assert(len == 1 || len == 2 || len == 4);
 	if(cpu.cr0.pg && cpu.cr0.pe){
 		if((laddr & 0xfff) + len -1 >=0x1000){
-			size_t len_new + len + (laddr & 0xfff) - 0x1000
+			size_t len_new = len + (laddr & 0xfff) - 0x1000;
+			uint32_t laddr_new = laddr + (len - len_new);
+			paddr_t paddr = page_translate(laddr);
+			paddr_t paddr_new = page_translate(laddr_new);
 		}
 	}
 
