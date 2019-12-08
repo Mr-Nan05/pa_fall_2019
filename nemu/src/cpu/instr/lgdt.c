@@ -8,8 +8,10 @@ void operand_lgdt(OPERAND &limit, OPERAND &base)
     limit.addr = addr;      base.addr = addr + 2;
 }
 
-void gdtr_change(OPERAND base,OPERAND limit)
+void gdtr_change(OPERAND &base,OPERAND &limit)
 {
+    operand_lgdt(limit,base);
+    operand_read(&limit);   operand_read(&base);
     cpu.gdtr.limit = limit.val;
     if(data_size == 16)
         cpu.gdtr.base = base.val & 0x00ffffff;
@@ -23,10 +25,7 @@ make_instr_func(lgdt){
     int len = 1 + modrm_rm(eip + 1, &opr_src);
 
     uint32_t addr = opr_src.addr;
-
     OPERAND limit,base;
-    operand_lgdt(limit,base);
-    operand_read(&limit);   operand_read(&base);
 
     print_asm_1("lgdt","",2,&opr_src);
     return len;
