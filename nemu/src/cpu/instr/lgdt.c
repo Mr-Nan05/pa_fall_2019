@@ -26,7 +26,7 @@ make_instr_func(lgdt){
 
     uint32_t addr = opr_src.addr;
     OPERAND limit,base;
-    gdtr_change(base,limit);
+    gdtr_change(base,limit, addr);
     print_asm_1("lgdt","",2,&opr_src);
     return len;
 #else
