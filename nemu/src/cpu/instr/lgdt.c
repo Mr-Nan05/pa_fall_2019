@@ -1,9 +1,9 @@
 #include "cpu/instr.h"
 
-void operand_lgdt(OPERAND &limit, OPERAND &base, uint32_t addr)
-{
+//void operand_lgdt(OPERAND &limit, OPERAND &base, uint32_t addr)
+//{
 
-}
+//}
 
 //void gdtr_change(OPERAND &base,OPERAND &limit, uint32_t addr)
 //{
