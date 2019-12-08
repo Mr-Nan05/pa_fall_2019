@@ -11,7 +11,7 @@ uint32_t segment_translate(uint32_t offset, uint8_t sreg)
 	return cpu.segReg[sreg].base + offset;
 }
 
-void load_sreg_assert(SegDesc target)
+void load_sreg_assert(SegDesc target, uint8_t sreg)
 {
 	assert(target.privilege_level >= cpu.segReg[sreg].rpl);
 	assert(target.present == 1);
@@ -24,7 +24,7 @@ void load_sreg_assert(SegDesc target)
 	assert(target.limit_19_16 == 0xf);
 }
 
-void load_sreg_cpu(SegDesc target)
+void load_sreg_cpu(SegDesc target,  uint8_t sreg)
 {
 	cpu.segReg[sreg].base = target.base_15_0 + ((uint32_t)target.base_23_16 << 16) + ((uint32_t)target.base_31_24 << 24);
 	cpu.segReg[sreg].limit = target.limit_15_0 + ((uint32_t)target.limit_19_16 << 16);
@@ -45,12 +45,12 @@ void load_sreg(uint8_t sreg)
 	 * The visible part of 'sreg' should be assigned by mov or ljmp already.
 	 */
 	SegDesc target;
-	uint32_t entry = load_sreg_entry(sreg);
+	uint32_t entry = load_sreg_entry(sreg);	
 
 	target.val[0] = laddr_read(entry, 4);
 	target.val[1] = laddr_read(entry + 4, 4);
 
-	load_sreg_assert(target);
+	load_sreg_assert(target, sreg);
 
-	load_sreg_cpu(target);
+	load_sreg_cpu(target, sreg);
 }
