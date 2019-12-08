@@ -33,6 +33,11 @@ void load_sreg_cpu(SegDesc target)
 	cpu.segReg[sreg].type = target.type + (target.segment_type << 4);
 }
 
+uint32_t load_sreg_entry(uint8_t sreg)
+{
+	return cpu.gdtr.base + (cpu.segReg[sreg].index) * 8;
+}
+
 // load the invisible part of a segment register
 void load_sreg(uint8_t sreg)
 {
@@ -40,7 +45,7 @@ void load_sreg(uint8_t sreg)
 	 * The visible part of 'sreg' should be assigned by mov or ljmp already.
 	 */
 	SegDesc target;
-	uint32_t entry = cpu.gdtr.base + (cpu.segReg[sreg].index) * 8;
+	uint32_t entry = load_sreg_entry(sreg);
 
 	target.val[0] = laddr_read(entry, 4);
 	target.val[1] = laddr_read(entry + 4, 4);
