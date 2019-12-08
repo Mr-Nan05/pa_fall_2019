@@ -37,23 +37,53 @@ hw_mem_write(paddr, len, data);
 #endif
 }
 
+bool laddr_if1()
+{
+	return cpu.cr0.pg && cpu.cr0.pe;
+}
+
+bool laddr_if(laddr_t laddr, size_t len)
+{
+	return (laddr & 0xfff) + len - 1 >= 0x1000;
+}
+
+size_t laddr_len_new(laddr_t laddr, size_t len)
+{
+	return len + (laddr & 0xfff) - 0x1000;
+}
+
+uint32_t laddr_laddr_new(laddr_t laddr, size_t len,size_t len_new)
+{
+	return  laddr + (len - len_new);
+}
+
+uint32_t laddr_read1(paddr_t paddr, paddr_t paddr_new, size_t len, size_t len_new)
+{
+	return (paddr_read(paddr, (len - len_new))+ (paddr_read(paddr_new, len_new) << (len - len_new)*8));
+}
+
+uint32_t laddr_read2(paddr_t paddr, size_t len)
+{
+	paddr_read(paddr, len);
+}
+
 uint32_t laddr_read(laddr_t laddr, size_t len)
 {
 	//return paddr_read(laddr, len);
 
 	assert(len == 1||len == 2 || len == 4);
-	if(cpu.cr0.pg && cpu.cr0.pe){
-		if((laddr & 0xfff) + len - 1 >= 0x1000){
-			size_t len_new = len + (laddr & 0xfff) - 0x1000;
-			uint32_t laddr_new = laddr + (len - len_new);
+	if(laddr_if1()){
+		if(laddr_if(laddr, len)){
+			size_t len_new = laddr_len_new(laddr, len);
+			uint32_t laddr_new = laddr_laddr_new(laddr, len, len_new);
 			paddr_t paddr = page_translate(laddr);
 			paddr_t paddr_new = page_translate(laddr_new);
-			return (paddr_read(paddr, (len - len_new))+ (paddr_read(paddr_new, len_new) << (len - len_new)*8));
+			return laddr_read1(paddr, paddr_new, len, len_new);
 
 		}
 		else {
 			paddr_t paddr = page_translate(laddr);
-			return paddr_read(paddr, len);
+			return laddr_read2(paddr,len);
 		}
 	}
 	else return paddr_read(laddr,  len);
