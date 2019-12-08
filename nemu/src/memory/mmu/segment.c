@@ -11,6 +11,21 @@ uint32_t segment_translate(uint32_t offset, uint8_t sreg)
 	return cpu.segReg[sreg].base + offset;
 }
 
+void load_sreg_assert(SegDesc target)
+{
+	assert(target.privilege_level >= cpu.segReg[sreg].rpl);
+	assert(target.present == 1);
+	assert(target.granularity == 1);
+	assert(target.base_15_0 == 0);
+	assert(target.base_23_16 == 0);
+	assert(target.base_31_24 == 0);
+
+	assert(target.limit_15_0 == 0xffff);
+	assert(target.limit_19_16 == 0xf);
+}
+
+
+
 // load the invisible part of a segment register
 void load_sreg(uint8_t sreg)
 {
@@ -23,15 +38,7 @@ void load_sreg(uint8_t sreg)
 	target.val[0] = laddr_read(entry, 4);
 	target.val[1] = laddr_read(entry + 4, 4);
 
-	assert(target.privilege_level >= cpu.segReg[sreg].rpl);
-	assert(target.present == 1);
-	assert(target.granularity == 1);
-	assert(target.base_15_0 == 0);
-	assert(target.base_23_16 == 0);
-	assert(target.base_31_24 == 0);
-
-	assert(target.limit_15_0 == 0xffff);
-	assert(target.limit_19_16 == 0xf);
+	load_sreg_assert(target);
 
 	cpu.segReg[sreg].base = target.base_15_0 + ((uint32_t)target.base_23_16 << 16) + ((uint32_t)target.base_31_24 << 24);
 	cpu.segReg[sreg].limit = target.limit_15_0 + ((uint32_t)target.limit_19_16 << 16);
