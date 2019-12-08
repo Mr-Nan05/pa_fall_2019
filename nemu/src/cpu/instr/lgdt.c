@@ -2,7 +2,7 @@
 
 OPERAND for_limit(uint32_t addr)
 {   
-    OPERAND limit
+    OPERAND limit;
     limit.data_size = 16;  
     limit.type = OPR_MEM; 
     limit.sreg = SREG_DS; 
@@ -12,10 +12,12 @@ OPERAND for_limit(uint32_t addr)
 
 OPERAND for_base(uint32_t addr)
 {
+    OPERAND base;
        base.data_size = 32;
       base.type = OPR_MEM;
       base.sreg = SREG_DS;
         base.addr = addr + 2;
+        return base;
 }
 
 void lgdt_choose(OPERAND limit)
@@ -33,8 +35,8 @@ make_instr_func(lgdt){
     int len = 1 + modrm_rm(eip + 1, &opr_src);
 
     uint32_t addr = opr_src.addr;
-    OPERAND limit = for_limit();
-    OPERAND base = for_base();
+    OPERAND limit = for_limit(addr);
+    OPERAND base = for_base(addr);
     //gdtr_change(base,limit, addr);
       //operand_lgdt(limit,base, addr);
     operand_read(&limit);   operand_read(&base);
