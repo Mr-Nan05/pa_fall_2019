@@ -20,7 +20,7 @@ OPERAND for_base(uint32_t addr)
         return base;
 }
 
-void lgdt_choose(OPERAND limit)
+void lgdt_choose(OPERAND limit, OPERAND base)
 {
     cpu.gdtr.limit = limit.val;
     if(data_size == 16)
@@ -40,7 +40,7 @@ make_instr_func(lgdt){
     //gdtr_change(base,limit, addr);
       //operand_lgdt(limit,base, addr);
     operand_read(&limit);   operand_read(&base);
-    lgdt_choose(limit);
+    lgdt_choose(limit, base);
     print_asm_1("lgdt","",2,&opr_src);
     return len;
 #else
