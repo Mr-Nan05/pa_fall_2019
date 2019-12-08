@@ -104,8 +104,8 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 	laddr_assert(len);
 	if(laddr_if1()){
 		if((laddr_if(laddr, len)){
-			size_t len_new = len + (laddr & 0xfff) - 0x1000;
-			uint32_t laddr_new = laddr + (len - len_new);
+			size_t len_new = laddr_len_new(laddr, len);
+			uint32_t laddr_new = laddr_laddr_new(laddr, len, len_new);
 			paddr_t paddr = page_translate(laddr);
 			paddr_t paddr_new = page_translate(laddr_new);
 			uint32_t data_tmp1 = 0;
