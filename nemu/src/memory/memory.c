@@ -99,6 +99,8 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 	else return laddr_read3(laddr, len);
 }
 
+
+
 void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 {
 	laddr_assert(len);
@@ -108,11 +110,11 @@ void laddr_write(laddr_t laddr, size_t len, uint32_t data)
 			uint32_t laddr_new = laddr_laddr_new(laddr, len, len_new);
 			paddr_t paddr = page_translate(laddr);
 			paddr_t paddr_new = page_translate(laddr_new);
-			uint32_t data_tmp1 = 0;
-			uint32_t data_tmp2 = 0;
+			uint32_t data_tmp1 = data - (data_tmp2 << (len - len_new)*8);
+			uint32_t data_tmp2 = data >> ((len - len_new)*8);
 
-			data_tmp2 = data >> ((len - len_new)*8);
-			data_tmp1 = data - (data_tmp2 << (len - len_new)*8);
+			//data_tmp2 = data >> ((len - len_new)*8);
+			//data_tmp1 = data - (data_tmp2 << (len - len_new)*8);
 
 			paddr_write(paddr,(len - len_new),data_tmp1);
 			paddr_write(paddr_new, len_new, data_tmp2);
