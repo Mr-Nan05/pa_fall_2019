@@ -64,7 +64,12 @@ uint32_t laddr_read1(paddr_t paddr, paddr_t paddr_new, size_t len, size_t len_ne
 
 uint32_t laddr_read2(paddr_t paddr, size_t len)
 {
-	paddr_read(paddr, len);
+	return paddr_read(paddr, len);
+}
+
+uint32_t laddr_read3(laddr_t laddr, size_t len)
+{
+	return	paddr_read(laddr,  len);
 }
 
 uint32_t laddr_read(laddr_t laddr, size_t len)
@@ -86,7 +91,7 @@ uint32_t laddr_read(laddr_t laddr, size_t len)
 			return laddr_read2(paddr,len);
 		}
 	}
-	else return paddr_read(laddr,  len);
+	else return laddr_read3(laddr, len);
 }
 
 void laddr_write(laddr_t laddr, size_t len, uint32_t data)
