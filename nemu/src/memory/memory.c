@@ -72,11 +72,16 @@ uint32_t laddr_read3(laddr_t laddr, size_t len)
 	return	paddr_read(laddr,  len);
 }
 
+void laddr_assert(size_t len)
+{
+	assert(len == 1||len == 2 || len == 4);
+}
+
 uint32_t laddr_read(laddr_t laddr, size_t len)
 {
 	//return paddr_read(laddr, len);
 
-	assert(len == 1||len == 2 || len == 4);
+	laddr_assert(len);
 	if(laddr_if1()){
 		if(laddr_if(laddr, len)){
 			size_t len_new = laddr_len_new(laddr, len);
