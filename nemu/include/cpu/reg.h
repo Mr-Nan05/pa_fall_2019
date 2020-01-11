@@ -135,12 +135,6 @@ typedef struct
 #else
 	uint8_t dummy_intr[7];
 #endif
-
-#ifdef IA32_INTR
-	// interrupt
-	IDTR idtr; // IDTR, todo: define type IDTR
-	uint8_t intr;
-#endif
 } CPU_STATE;
 
 enum
