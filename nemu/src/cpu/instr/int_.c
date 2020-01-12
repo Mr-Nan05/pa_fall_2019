@@ -12,9 +12,10 @@ make_instr_func(int_){
 
      uint8_t intr_no = imm.val;
 
-     print_asm_1("int", "", 2, &imm);
+     //print_asm_1("int", "", 2, &imm);
      raise_sw_intr(intr_no);
-     return 0;
+     int len = 0;
+     return len;
 #else
       printf("please implement int\n"); assert(0);
 #endif
