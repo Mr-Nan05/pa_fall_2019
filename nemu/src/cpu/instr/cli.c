@@ -4,9 +4,8 @@
 
 make_instr_func(cli) {
 
-	cpu.eflags.IF=0;
-
-	return 1;
-
+    int len=1;
+    cpu.eflags.IF=0;
+    return len;
 }
 
