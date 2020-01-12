@@ -1,6 +1,6 @@
 #include "cpu/instr.h"
 
-void cpu_write()
+void iret_cpu_write()
 {
     cpu.eip=vaddr_read(cpu.esp,SREG_DS,4);
 	cpu.esp+=4;
@@ -11,7 +11,7 @@ void cpu_write()
 }
 make_instr_func(iret){
 #ifdef IA32_INTR
-    cpu_write();
+    iret_cpu_write();
     return 0;
 #else
     printf("please implement iret\n"); assert(0);
