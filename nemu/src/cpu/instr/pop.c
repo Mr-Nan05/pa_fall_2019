@@ -22,15 +22,9 @@ static void instr_execute_1op(){
 
 make_instr_impl_1op(pop,r,v)
 
-make_instr_func(popa){
-#ifdef IA32_INTR
-    int len = 1;
-    uint32_t esp = cpu.esp;
-    uint32_t esp_inc = (data_size/8)*8;
-    cpu.esp += esp_inc;
-
-    if(data_size == 16){
-        OPERAND r0,r1,r2,r3,r4,r5,r6,r7;
+void addr_16()
+{
+    OPERAND r0,r1,r2,r3,r4,r5,r6,r7;
         r0.type=r1.type=r2.type=r3.type=r4.type=r5.type=r6.type=r7.type=OPR_MEM;
         r0.sreg=r1.sreg=r2.sreg=r3.sreg=r4.sreg=r5.sreg=r6.sreg=r7.sreg=SREG_SS;
         r0.data_size=r1.data_size=r2.data_size=r3.data_size=r4.data_size=r5.data_size=r6.data_size=r7.data_size=16;
@@ -57,9 +51,11 @@ make_instr_func(popa){
         cpu.edx = (cpu.edx & 0xffff0000) + r5.val;
         cpu.ecx = (cpu.ecx & 0xffff0000) + r6.val;
         cpu.eax = (cpu.eax & 0xffff0000) + r7.val;
-    }
-    else if(data_size == 32){
-        OPERAND r0,r1,r2,r3,r4,r5,r6,r7;
+}
+
+void addr_32()
+{
+    OPERAND r0,r1,r2,r3,r4,r5,r6,r7;
         r0.type=r1.type=r2.type=r3.type=r4.type=r5.type=r6.type=r7.type=OPR_MEM;
         r0.sreg=r1.sreg=r2.sreg=r3.sreg=r4.sreg=r5.sreg=r6.sreg=r7.sreg=SREG_SS;
         r0.data_size=r1.data_size=r2.data_size=r3.data_size=r4.data_size=r5.data_size=r6.data_size=r7.data_size=32;
@@ -86,7 +82,17 @@ make_instr_func(popa){
         cpu.edx = r5.val;
         cpu.ecx = r6.val;
         cpu.eax = r7.val;
-    }
+}
+
+make_instr_func(popa){
+#ifdef IA32_INTR
+    int len = 1;
+    uint32_t esp = cpu.esp;
+    uint32_t esp_inc = (data_size/8)*8;
+    cpu.esp += esp_inc;
+
+    if(data_size == 16) addr_16();
+    else if(data_size == 32) addr_32();
     print_asm_0("popa","",1);
     return len;
 #else 
