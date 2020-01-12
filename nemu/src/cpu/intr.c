@@ -14,6 +14,9 @@ void cpu_write()
 
 uint32_t addr_next()
 {
+	uint32_t phy_base=0;
+	if(cpu.cr0.pg==1) phy_base=page_translate(cpu.idtr.base);
+	else phy_base=cpu.idtr.base;
 	GateDesc *addr=(GateDesc *)(hw_mem+phy_base);
 	GateDesc *addr_2=&*(addr+intr_no);
 	if(addr_2->type==0xE) cpu.eflags.IF=0;
@@ -33,11 +36,6 @@ void raise_intr(uint8_t intr_no)
 	//assert(0);
 
 	cpu_write();
-	uint32_t phy_base=0;
-	if(cpu.cr0.pg==1) phy_base=page_translate(cpu.idtr.base);
-	else phy_base=cpu.idtr.base;
-
-
 	cpu.eip=addr_next();
 
 #endif
