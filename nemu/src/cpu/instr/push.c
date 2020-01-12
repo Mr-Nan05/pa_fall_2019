@@ -26,6 +26,12 @@ make_instr_impl_1op(push,i,b)
 make_instr_func(pusha){
 #ifdef  IA32_INTR
     int len = 1;
+    uint32_t esp = cpu.esp;
+    cpu.esp-=4;
+	vaddr_write(cpu.esp,SREG_DS,4,cpu.eax);
+
+    cpu.esp-=4;
+    vaddr_write(cpu.esp,SREG_DS,4,cpu.ecx);
     
     print_asm_0("pusha","",1);
     return len;
