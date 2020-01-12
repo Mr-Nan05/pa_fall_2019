@@ -1,6 +1,6 @@
 #ifndef __INSTR_LIDT_H__
 #define __INSTR_LIDT_H__
 
-//make_instr_func(lidt);
-make_instr_func(lidt_rm_l);
+make_instr_func(lidt);
+
 #endif
