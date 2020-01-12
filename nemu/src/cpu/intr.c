@@ -12,7 +12,7 @@ void cpu_write()
 	vaddr_write(cpu.esp,SREG_DS,4,cpu.eip);
 }
 
-uint32_t addr_next()
+uint32_t addr_next(uint8_t intr_no)
 {
 	uint32_t phy_base=0;
 	if(cpu.cr0.pg==1) phy_base=page_translate(cpu.idtr.base);
@@ -36,7 +36,7 @@ void raise_intr(uint8_t intr_no)
 	//assert(0);
 
 	cpu_write();
-	cpu.eip=addr_next();
+	cpu.eip=addr_next(intr_no);
 
 #endif
 }
