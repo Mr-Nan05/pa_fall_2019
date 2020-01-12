@@ -39,7 +39,7 @@ make_instr_func(pusha){
 	vaddr_write(cpu.esp,SREG_DS,4,cpu.ebx);
 
 	cpu.esp-=4;
-	vaddr_write(cpu.esp,SREG_DS,4,temp_esp);
+	vaddr_write(cpu.esp,SREG_DS,4,esp);
     cpu.esp-=4;
 	vaddr_write(cpu.esp,SREG_DS,4,cpu.ebp);
 	cpu.esp-=4;
