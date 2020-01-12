@@ -22,7 +22,7 @@ static void instr_execute_1op(){
 
 make_instr_impl_1op(pop,r,v)
 
-void addr_16()
+void addr_16(uint32_t esp)
 {
     OPERAND r0,r1,r2,r3,r4,r5,r6,r7;
         r0.type=r1.type=r2.type=r3.type=r4.type=r5.type=r6.type=r7.type=OPR_MEM;
@@ -53,7 +53,7 @@ void addr_16()
         cpu.eax = (cpu.eax & 0xffff0000) + r7.val;
 }
 
-void addr_32()
+void addr_32(uint32_t esp)
 {
     OPERAND r0,r1,r2,r3,r4,r5,r6,r7;
         r0.type=r1.type=r2.type=r3.type=r4.type=r5.type=r6.type=r7.type=OPR_MEM;
@@ -88,11 +88,10 @@ make_instr_func(popa){
 #ifdef IA32_INTR
     int len = 1;
     uint32_t esp = cpu.esp;
-    uint32_t esp_inc = (data_size/8)*8;
-    cpu.esp += esp_inc;
+    cpu.esp += (data_size/8)*8;
 
-    if(data_size == 16) addr_16();
-    else if(data_size == 32) addr_32();
+    if(data_size == 16) addr_16(esp);
+    else if(data_size == 32) addr_32(esp);
     print_asm_0("popa","",1);
     return len;
 #else 
