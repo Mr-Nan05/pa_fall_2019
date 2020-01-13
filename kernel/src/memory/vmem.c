@@ -8,6 +8,25 @@
 
 PDE *get_updir();
 
+void init_user_page(PDE *pdir,PTE *ptable)
+{
+	uint32_t pdir_idx, ptable_idx, pframe_idx;
+
+	memset(pdir, 0, NR_PT * sizeof(PDE));
+
+	pframe_idx = 0;
+	for (pdir_idx = 0; pdir_idx < NR_PT; pdir_idx ++) {
+		pdir[pdir_idx].val = make_pde(ptable);
+		pdir[pdir_idx + VMEM_ADDR / PT_SIZE].val = make_pde(ptable);
+		for (ptable_idx = 0; ptable_idx < NR_PTE; ptable_idx ++) {
+			ptable->val = make_pte(pframe_idx << 12);
+			pframe_idx ++;
+			ptable ++;
+
+		}
+	}
+}
+
 void create_video_mapping()
 {
 
@@ -16,8 +35,12 @@ void create_video_mapping()
 	 * [0xa0000, 0xa0000 + SCR_SIZE) for user program. You may define
 	 * some page tables to create this mapping.
 	 */
-	init_user_page();
+	
 	//panic("please implement me");
+
+	PDE *pdir = (PDE *)va_to_pa(updir);
+	PTE *ptable = (PTE *)va_to_pa(uptable);
+	init_user_page(pdir,ptable);
 }
 
 void video_mapping_write_test()
