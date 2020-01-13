@@ -52,6 +52,7 @@ void create_video_mapping()
 	PDE *pdir = get_updir();
 	pdir->present = 1;
 	PTE *ptable =(PTE*)(pdir->page_frame<<12);
+	init_page(pdir,ptable);
 }
 
 void video_mapping_write_test()
