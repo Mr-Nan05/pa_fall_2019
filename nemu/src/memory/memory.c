@@ -45,7 +45,7 @@ uint32_t paddr_read(paddr_t paddr, size_t len) {
 	return ret;
 }
 
-void mem_write()
+void mem_write(paddr_t paddr, size_t len, uint32_t data)
 {
 	if(is_mmio(paddr)==-1){
 		hw_mem_write(paddr, len, data);
