@@ -27,6 +27,18 @@ void init_user_page(PDE *pdir,PTE *ptable)
 	}
 }
 
+void init_page(PDE *pdir,PTE *ptable)
+{
+	uint32_t ptable_idx = VMEM_ADDR >> 12;
+	uint32_t ptable_size = ((VMEM_ADDR + SCR_SIZE) >> 12);
+
+	for(;ptable_idx <= ptable_size; ptable_idx++){
+		ptable[ptable_idx].val = make_pte(ptable_idx << 12);
+		ptable[ptable_idx].present = 1;
+
+	}
+}
+
 void create_video_mapping()
 {
 
@@ -40,15 +52,6 @@ void create_video_mapping()
 	PDE *pdir = get_updir();
 	pdir->present = 1;
 	PTE *ptable =(PTE*)(pdir->page_frame<<12);
-
-	uint32_t ptable_idx = VMEM_ADDR >> 12;
-	uint32_t ptable_size = ((VMEM_ADDR + SCR_SIZE) >> 12);
-
-	for(;ptable_idx <= ptable_size; ptable_idx++){
-		ptable[ptable_idx].val = make_pte(ptable_idx << 12);
-		ptable[ptable_idx].present = 1;
-
-	}
 }
 
 void video_mapping_write_test()
