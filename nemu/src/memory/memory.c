@@ -64,7 +64,7 @@ void paddr_write(paddr_t paddr, size_t len, uint32_t data) {
 	hw_mem_write(paddr, len, data);
 #endif
 #else
-	mem_write(paddr,data);
+	mem_write(paddr,len,data);
 #endif
 }
 
