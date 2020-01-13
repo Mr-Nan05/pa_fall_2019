@@ -20,7 +20,7 @@ static int TIMER_Thread(void *hz)
 	delay = 10;
 	while (timer_active)
 	{
-		//timer_intr();
+		timer_intr();
 		SDL_Delay(delay);
 	}
 	return 0;
