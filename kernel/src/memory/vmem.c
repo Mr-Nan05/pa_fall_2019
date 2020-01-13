@@ -8,26 +8,8 @@
 
 PDE *get_updir();
 
+
 void init_user_page(PDE *pdir,PTE *ptable)
-{
-	uint32_t pdir_idx, ptable_idx, pframe_idx;
-
-	memset(pdir, 0, NR_PT * sizeof(PDE));
-
-	pframe_idx = 0;
-	for (pdir_idx = 0; pdir_idx < NR_PT; pdir_idx ++) {
-		pdir[pdir_idx].val = make_pde(ptable);
-		pdir[pdir_idx + VMEM_ADDR / PT_SIZE].val = make_pde(ptable);
-		for (ptable_idx = 0; ptable_idx < NR_PTE; ptable_idx ++) {
-			ptable->val = make_pte(pframe_idx << 12);
-			pframe_idx ++;
-			ptable ++;
-
-		}
-	}
-}
-
-void init_page(PDE *pdir,PTE *ptable)
 {
 	uint32_t ptable_idx = VMEM_ADDR >> 12;
 	uint32_t ptable_size = ((VMEM_ADDR + SCR_SIZE) >> 12);
@@ -52,7 +34,7 @@ void create_video_mapping()
 	PDE *pdir = get_updir();
 	pdir->present = 1;
 	PTE *ptable =(PTE*)(pdir->page_frame<<12);
-	init_page(pdir,ptable);
+	init_user_page(pdir,ptable);
 }
 
 void video_mapping_write_test()
