@@ -1,11 +1,17 @@
 #include "cpu/instr.h"
 #include "device/port_io.h"
 
+void out_write(uint32_t size)
+{
+    uint16_t port_addr=cpu.edx & 0xFFFF;
+    size_t data_len=  size;
+    uint32_t data=cpu.eax;
+    pio_write(port_addr,data_len,data);
+}
+
 make_instr_func(out_b){
 #ifdef HAS_DEVICE_SERIAL
-    uint16_t port = cpu.edx & 0xffff;
-    uint8_t data = cpu.eax & 0xff;
-    pio_write(port, 1, data);
+    out_write(1);
     return 1;
 #else
     printf("please implement out\n");assert(0);
@@ -14,15 +20,7 @@ make_instr_func(out_b){
 
 make_instr_func(out_v){
 #ifdef HAS_DEVICE_SERIAL
-    uint16_t port = cpu.edx & 0xffff;
-    if(data_size == 16){
-        uint16_t data = cpu.eax & 0xffff;
-        pio_write(port, 2, data);
-    }
-    else if(data_size == 32){
-        uint32_t data = cpu.eax;
-        pio_write(port, 4, data);
-    }
+    out_write(data_size/8);
     return 1;
 #else
     printf("please implement out\n");assert(0);
