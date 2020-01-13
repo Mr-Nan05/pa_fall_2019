@@ -18,13 +18,13 @@ paddr_t page_translate(laddr_t laddr)
 	paddr_t pdir_base = cpu.cr3.pdbr << 12;
 	pde_target.val = paddr_read(pdir_base + dir*4, 4);
 
-	//assert(pde_target.present == 1);
+	assert(pde_target.present == 1);
 
 	PTE pte_target;
 	paddr_t pt_base = pde_target.page_frame << 12;
 	pte_target.val = paddr_read(pt_base + page*4, 4);
 
-	//assert(pte_target.present == 1);
+	assert(pte_target.present == 1);
 
 	result = (pte_target.page_frame << 12) + offset;
 
