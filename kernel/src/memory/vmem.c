@@ -27,7 +27,7 @@ void init_user_page(PDE *pdir,PTE *ptable)
 	}
 }
 
-void init_page(PDE *&pdir,PTE *&ptable)
+void init_page(PDE *pdir,PTE *ptable)
 {
 	uint32_t ptable_idx = VMEM_ADDR >> 12;
 	uint32_t ptable_size = ((VMEM_ADDR + SCR_SIZE) >> 12);
