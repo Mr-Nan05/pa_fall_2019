@@ -25,7 +25,14 @@ uint32_t ret = 0;
 #ifdef CACHE_ENABLED
 ret = cache_read(paddr, len, L1_dcache);
 #else
-ret = hw_mem_read(paddr, len);
+//ret = hw_mem_read(paddr, len);
+	if(is_mmio(paddr)==-1){
+		ret = hw_mem_read(paddr, len);
+	}
+	else{
+		int map_NO = is_mmio(paddr);
+		ret = mmio_read(paddr, len, map_NO);
+	}
 #endif
 return ret;
 }
