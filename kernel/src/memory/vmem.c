@@ -37,7 +37,8 @@ void create_video_mapping()
 	 */
 	
 	//panic("please implement me");
-
+	PDE updir[NR_PT] align_to_page;
+	PTE uptable[NR_PTE] align_to_page;
 	PDE *pdir = (PDE *)va_to_pa(updir);
 	PTE *ptable = (PTE *)va_to_pa(uptable);
 	init_user_page(pdir,ptable);
